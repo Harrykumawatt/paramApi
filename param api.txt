@@ -1,0 +1,65 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+void main() {
+  runApp(MyWidget());
+}
+
+class MyWidget extends StatefulWidget {
+  const MyWidget({super.key});
+
+  @override
+  State<MyWidget> createState() => _MyWidgetState();
+}
+
+List<dynamic> mydatalist = [];
+
+class _MyWidgetState extends State<MyWidget> {
+  @override
+  void initState() {
+    fetchdata();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(),
+        body: ListView.builder(
+          itemCount: mydatalist.length,
+          itemBuilder: (context, index) {
+            return Card(
+              child: ListTile(
+                trailing:
+                    Image.network(mydatalist[index]['img_url'].toString()),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  fetchdata() async {
+    final uri =
+        Uri.https('akshusofttech.com', 'philbrick/Philbrick_apis/bannerlist');
+
+    final response = await http.post(uri, headers: {
+      'x-api-key': 'ehello',
+      'Client-Service': 'secureclient',
+      'Auth-key': 'authforall',
+      'auth-token': 'MW1LdTZRMFljdWpaYS9XTFZXRTRnZz09'
+    });
+    Map<String, dynamic> mymap = json.decode(response.body);
+
+    setState(() {
+      mydatalist = mymap['data'];
+    });
+  }
+}
